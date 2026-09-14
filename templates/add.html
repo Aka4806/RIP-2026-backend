@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{template "head" .}}
+    <title>Добавление — SQL Index Lab</title>
+</head>
+<body>
+<div class="phone">
+    <main class="content add-page">
+        <header>
+            <div class="brand">ϟ SQL INDEX LAB</div>
+            <h1>Конфигурация индекса</h1>
+            <p class="subtitle">
+                Черновик конфигурации для будущей публикации.
+            </p>
+            <span class="badge">{{.index.Status}}</span>
+        </header>
+
+        <section class="form-section" aria-labelledby="media-title">
+            <h2 id="media-title">01 / Медиа</h2>
+
+            <label for="image-url">Изображение</label>
+            <input
+                id="image-url"
+                type="url"
+                value="{{media .index.ImageKey}}"
+            >
+            <img
+                class="draft-image"
+                src="{{media .index.ImageKey}}"
+                alt="Схема {{.index.Name}}"
+                width="320"
+                height="240"
+            >
+
+            <label for="video-url">Видео</label>
+            <input
+                id="video-url"
+                type="url"
+                value="{{media .index.VideoKey}}"
+            >
+            <video
+                class="draft-video"
+                controls
+                muted
+                playsinline
+                preload="metadata"
+                poster="{{media .index.ImageKey}}"
+            >
+                <source src="{{media .index.VideoKey}}">
+            </video>
+        </section>
+
+        <section class="form-section" aria-labelledby="fields-title">
+            <h2 id="fields-title">02 / Информация</h2>
+
+            <label for="name">Название</label>
+            <input id="name" type="text" value="{{.index.Name}}">
+
+            <label for="index-type">Тип индекса</label>
+            <input id="index-type" type="text" value="{{.index.IndexType}}">
+
+            <label for="table-size">Размер таблицы, строк</label>
+            <input
+                id="table-size"
+                type="number"
+                min="1"
+                step="1"
+                value="{{.index.TableSize}}"
+            >
+
+            <label for="selectivity">Селективность, доля строк</label>
+            <input
+                id="selectivity"
+                type="number"
+                min="0"
+                max="1"
+                step="0.001"
+                value="{{.index.Selectivity}}"
+            >
+
+            <label for="description">Описание</label>
+            <textarea id="description" rows="5">{{.index.Description}}</textarea>
+
+        </section>
+    </main>
+
+    {{template "nav" .}}
+</div>
+</body>
+</html>
+

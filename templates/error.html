@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{template "head" .}}
+    <title>Ошибка — SQL Index Lab</title>
+</head>
+<body>
+<div class="phone">
+    <main class="content">
+        <div class="brand">ϟ SQL INDEX LAB</div>
+        <h1>Не удалось открыть страницу</h1>
+        <p>{{.message}}</p>
+        <a href="/indexes">К списку индексов →</a>
+    </main>
+
+    {{template "nav" .}}
+</div>
+</body>
+</html>
