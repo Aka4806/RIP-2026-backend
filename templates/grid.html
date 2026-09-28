@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{template "head" .}}
+    <title>Индексы — SQL Index Lab</title>
+</head>
+<body>
+<div class="phone">
+    <main class="content">
+        <header>
+            <div class="brand">ϟ SQL INDEX LAB</div>
+            <h1>Индексы</h1>
+            <p class="subtitle">
+                Выберите конфигурацию для перехода к ней в ленте.
+            </p>
+        </header>
+
+        <form class="filter" method="get" action="/indexes">
+            <div class="filter-header">
+                <label for="table-size">Размер таблицы</label>
+                <span>
+                    {{if .selectedSize}}
+                        {{number .selectedSize}} строк
+                    {{else}}
+                        Все размеры
+                    {{end}}
+                </span>
+            </div>
+
+            <input
+                class="size-slider"
+                id="table-size"
+                name="size_step"
+                type="range"
+                min="0"
+                max="2"
+                step="1"
+                value="{{.selectedStep}}"
+                aria-describedby="size-labels"
+            >
+            <div class="slider-labels" id="size-labels">
+                <span>100K</span>
+                <span>1M</span>
+                <span>10M</span>
+            </div>
+
+            <div class="filter-footer">
+                <a href="/indexes">Все размеры</a>
+                <button type="submit">Применить</button>
+            </div>
+        </form>
+
+        {{if .error}}
+            <p class="error" role="alert">{{.error}}</p>
+        {{end}}
+
+        <div class="section-heading">
+            <h2>Конфигурации</h2>
+            <span>Найдено: {{len .indexes}}</span>
+        </div>
+
+        <div class="grid">
+            {{range .indexes}}
+                <article class="card">
+                    <a
+                        class="card-link"
+                        href="/feed/{{.ID}}"
+                        data-video-url="{{media .VideoURL "video"}}"
+                    >
+                        <img
+                            src="{{media .ImageURL "image"}}"
+                            alt="Схема {{.Name}}"
+                            width="320"
+                            height="240"
+                        >
+
+                        <div class="card-body">
+                            <h2>{{.Name}}</h2>
+                            <p>{{number .TableSize}} строк</p>
+                            <p>Селективность {{.Selectivity}}</p>
+
+                            <div class="card-footer">
+                                <span>♡ {{index $.likes .ID}}</span>
+                                <span aria-hidden="true">↗</span>
+                            </div>
+                        </div>
+                    </a>
+                    <form class="delete-form" method="post" action="/indexes/{{.ID}}/delete">
+                        {{if $.selectedSize}}
+                            <input type="hidden" name="size_step" value="{{$.selectedStep}}">
+                        {{end}}
+                        <button class="delete-button" type="submit" aria-label="Удалить {{.Name}}">
+                            <span aria-hidden="true">×</span> Удалить
+                        </button>
+                    </form>
+                </article>
+            {{else}}
+                {{if not .error}}
+                    <p class="empty">
+                        Конфигурации не найдены. Попробуйте другой размер таблицы.
+                    </p>
+                {{end}}
+            {{end}}
+        </div>
+    </main>
+
+    {{template "nav" .}}
+</div>
+</body>
+</html>

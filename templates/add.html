@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{template "head" .}}
+    <title>Добавление — SQL Index Lab</title>
+</head>
+<body>
+<div class="phone">
+    <main class="content add-page">
+        <header>
+            <div class="brand">ϟ SQL INDEX LAB</div>
+            <h1>Конфигурация индекса</h1>
+            <p class="subtitle">
+                {{if .hasDraft}}Заполните информацию для публикации.{{else}}Выберите медиа и укажите название.{{end}}
+            </p>
+            <span class="badge">{{statusLabel .index.Status}}</span>
+        </header>
+
+        {{if .error}}
+            <p class="error" role="alert">{{.error}}</p>
+        {{end}}
+
+        <form method="post" action="{{if .hasDraft}}/indexes/{{.index.ID}}/publish{{else}}/indexes{{end}}">
+            <section class="form-section" aria-labelledby="media-title">
+                <h2 id="media-title">Медиа</h2>
+
+                <label for="image-file">Изображение</label>
+                <input id="image-file" type="file" accept="image/*">
+                <img
+                    class="draft-image"
+                    src="{{media .index.ImageURL "image"}}"
+                    alt="Обложка конфигурации"
+                    width="320"
+                    height="240"
+                >
+
+                <label for="video-file">Видео</label>
+                <input id="video-file" type="file" accept="video/*">
+                <video
+                    class="draft-video"
+                    controls
+                    muted
+                    playsinline
+                    preload="metadata"
+                    poster="{{media .index.ImageURL "image"}}"
+                >
+                    <source src="{{media .index.VideoURL "video"}}">
+                </video>
+            </section>
+
+            <section class="form-section" aria-labelledby="fields-title">
+                <h2 id="fields-title">Информация</h2>
+
+                <label for="name">Название</label>
+                <input
+                    id="name"
+                    {{if not .hasDraft}}name="name"{{end}}
+                    type="text"
+                    maxlength="150"
+                    value="{{.index.Name}}"
+                    {{if .hasDraft}}readonly{{else}}required{{end}}
+                >
+
+                {{if .hasDraft}}
+                    <label for="description">Краткое описание</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        maxlength="500"
+                        required
+                    >{{text .index.ShortDescription}}</textarea>
+
+                    <label for="table-size">Размер таблицы, строк</label>
+                    <input
+                        id="table-size"
+                        name="table_size"
+                        type="number"
+                        min="1"
+                        max="2147483647"
+                        step="1"
+                        value="{{.tableSize}}"
+                        required
+                    >
+
+                    <label for="selectivity">Селективность, доля строк</label>
+                    <input
+                        id="selectivity"
+                        name="selectivity"
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.000001"
+                        value="{{.selectivity}}"
+                        required
+                    >
+                {{end}}
+            </section>
+
+            <button class="submit-button" type="submit">
+                {{if .hasDraft}}Опубликовать{{else}}Далее{{end}}
+            </button>
+        </form>
+    </main>
+
+    {{template "nav" .}}
+</div>
+</body>
+</html>

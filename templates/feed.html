@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{template "head" .}}
+    <title>{{.index.Name}} — SQL Index Lab</title>
+</head>
+<body>
+<div class="phone">
+    <main class="feed">
+
+        <img
+            class="feed-poster"
+            src="{{media .index.ImageURL "image"}}"
+            alt="Схема {{.index.Name}}"
+        >
+        <video
+            class="feed-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="{{media .index.ImageURL "image"}}"
+            aria-label="Анимация {{.index.Name}}"
+        >
+            <source src="{{media .index.VideoURL "video"}}">
+        </video>
+        <div class="feed-shade"></div>
+
+        <header class="feed-header">
+            <div class="brand">ϟ SQL INDEX LAB</div>
+            <span class="badge">{{statusLabel .index.Status}}</span>
+        </header>
+
+        <aside class="feed-actions" aria-label="Параметры конфигурации">
+            <div class="metric">
+                <strong>{{number .index.TableSize}}</strong>
+                <span>строк</span>
+            </div>
+
+            <div class="metric">
+                <strong>{{.index.Selectivity}}</strong>
+                <span>селективность</span>
+            </div>
+
+            <div class="metric">
+                <span class="circle" aria-hidden="true">♡</span>
+                <strong>{{.likes}}</strong>
+                <span>лайков</span>
+            </div>
+
+            <a class="next" href="/feed/{{.index.ID}}?next=true">
+                <span class="circle" aria-hidden="true">↓</span>
+                <span>Следующий</span>
+            </a>
+        </aside>
+
+        <section class="feed-caption">
+            <h1>{{.index.Name}}</h1>
+
+            <details class="feed-description">
+                <summary>
+                    <span class="description-text">{{text .index.ShortDescription}}</span>
+                    <span class="more">больше</span>
+                    <span class="less">меньше</span>
+                </summary>
+            </details>
+        </section>
+    </main>
+
+    {{template "nav" .}}
+</div>
+</body>
+</html>

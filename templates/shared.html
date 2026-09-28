@@ -1,0 +1,33 @@
+{{define "head"}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{styleURL}}">
+{{end}}
+
+{{define "nav"}}
+    <nav class="bottom-nav" aria-label="Основная навигация">
+        <a
+            href="/feed/"
+            {{if eq .active "feed"}}class="active" aria-current="page"{{end}}
+        >
+            <span class="nav-icon" aria-hidden="true">▷</span>
+            Лента
+        </a>
+
+        <a
+            href="/add"
+            {{if eq .active "add"}}class="active" aria-current="page"{{end}}
+        >
+            <span class="nav-icon" aria-hidden="true">＋</span>
+            Добавление
+        </a>
+
+        <a
+            href="/indexes"
+            {{if eq .active "grid"}}class="active" aria-current="page"{{end}}
+        >
+            <span class="nav-icon" aria-hidden="true">▦</span>
+            Плитка
+        </a>
+    </nav>
+{{end}}
