@@ -1,0 +1,283 @@
+{
+  "info": {
+    "name": "SQL Index API — ЛР3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "10 методов API. Выберите локальные файлы в запросе 02. Запрос 05 выполните дважды: без ID и по ID с next=true."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:18083"
+    },
+    {
+      "key": "index_id",
+      "value": ""
+    },
+    {
+      "key": "feed_id",
+      "value": ""
+    },
+    {
+      "key": "next",
+      "value": "false"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Список с фильтром",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/indexes?table_size=1000000"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Создать черновик с файлами",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{base_url}}/api/indexes",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "B-tree 1M API",
+              "type": "text"
+            },
+            {
+              "key": "image",
+              "type": "file",
+              "src": "media/btree_100k.png"
+            },
+            {
+              "key": "video",
+              "type": "file",
+              "src": "media/btree_100k.mp4"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "if (pm.response.code === 201) { pm.collectionVariables.set(\"index_id\", String(pm.response.json().id)); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Получить черновик",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/indexes/draft"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Опубликовать карточку",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/indexes/{{index_id}}/publication",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"short_description\": \"B-tree хранит ключи в отсортированном виде. Поддерживает точный поиск, диапазоны и сортировку.\",\n  \"table_size\": 1000000,\n  \"selectivity\": 0.01\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Лента без ID или следующая по ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/feed/{{feed_id}}?next={{next}}",
+        "description": "Сначала feed_id пустой, next=false. Затем задайте feed_id равным index_id и next=true и выполните этот же запрос повторно."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Поставить или отменить лайк",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/indexes/{{index_id}}/likes",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"like\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Удалить свою карточку",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/api/indexes/{{index_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Зарегистрировать пользователя",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/users",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"demo_{{$timestamp}}\",\n  \"password\": \"demo-password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Аутентификация заглушка",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{base_url}}/api/users/authentication"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 501\", function () { pm.response.to.have.status(501); });",
+              "pm.test(\"Пустое тело\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Авторизация заглушка",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{base_url}}/api/users/authorization"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 501\", function () { pm.response.to.have.status(501); });",
+              "pm.test(\"Пустое тело\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
