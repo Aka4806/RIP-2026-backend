@@ -1,0 +1,524 @@
+basePath: /
+definitions:
+  handler.Credentials:
+    properties:
+      password:
+        example: demo-password
+        type: string
+      username:
+        example: student
+        type: string
+    type: object
+  handler.LikeInput:
+    properties:
+      like:
+        example: 1
+        type: integer
+    type: object
+  handler.PublicationInput:
+    properties:
+      selectivity:
+        example: 0.01
+        type: number
+      short_description:
+        example: B-tree for equality and range queries
+        type: string
+      table_size:
+        example: 1000000
+        type: integer
+    type: object
+  handler.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+      user:
+        $ref: '#/definitions/serializer.User'
+    type: object
+  serializer.Index:
+    properties:
+      id:
+        type: integer
+      image_url:
+        type: string
+      is_liked:
+        type: integer
+      is_owner:
+        type: integer
+      likes_count:
+        type: integer
+      name:
+        type: string
+      selectivity:
+        type: number
+      short_description:
+        type: string
+      table_size:
+        type: integer
+      video_url:
+        type: string
+    type: object
+  serializer.User:
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: JWT авторизация и Redis blacklist. В Authorize введите Bearer и токен
+    через пробел.
+  title: SQL Index API ЛР4
+  version: "4.0"
+paths:
+  /api/feed/{id}:
+    get:
+      parameters:
+      - description: ID карточки; для начала ленты используйте /api/feed/
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Следующая карточка
+        in: query
+        name: next
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Index'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Лента конфигураций
+      tags:
+      - Конфигурации
+  /api/indexes:
+    get:
+      parameters:
+      - description: Размер таблицы
+        in: query
+        name: table_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/serializer.Index'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Список опубликованных конфигураций
+      tags:
+      - Конфигурации
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Название
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Изображение до 10 МиБ
+        in: formData
+        name: image
+        required: true
+        type: file
+      - description: Видео до 50 МиБ
+        in: formData
+        name: video
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/serializer.Index'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Создать черновик с изображением и видео
+      tags:
+      - Конфигурации
+  /api/indexes/{id}:
+    delete:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Удалить свою конфигурацию
+      tags:
+      - Конфигурации
+  /api/indexes/{id}/likes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 1 поставить, 0 отменить
+        in: body
+        name: like
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LikeInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Index'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Поставить или отменить лайк
+      tags:
+      - Конфигурации
+  /api/indexes/{id}/publication:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID черновика
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Поля публикации
+        in: body
+        name: publication
+        required: true
+        schema:
+          $ref: '#/definitions/handler.PublicationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Index'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Опубликовать свой черновик
+      tags:
+      - Конфигурации
+  /api/indexes/draft:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Index'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Черновик текущего пользователя
+      tags:
+      - Конфигурации
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Credentials'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/serializer.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Регистрация пользователя
+      tags:
+      - Пользователи
+  /api/users/authentication:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Credentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "415":
+          description: Unsupported Media Type
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Аутентификация и получение JWT
+      tags:
+      - Пользователи
+  /api/users/authorization:
+    post:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "503":
+          description: Service Unavailable
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Деавторизация и отзыв JWT через Redis blacklist
+      tags:
+      - Пользователи
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
