@@ -1,4 +1,4 @@
-# SQL Index API ЛР4
+# SQL Index ЛР4
 
 Go / Gin, PostgreSQL, MinIO, JWT HS256 и Redis blacklist.
 
