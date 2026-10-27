@@ -1,4 +1,4 @@
-# SQL Index API
+# SQL Index ЛР3
 
 REST API конфигураций индексов B-tree, Hash и Bitmap для SPA. Данные хранятся в PostgreSQL, изображения и видео — в MinIO. HTML-шаблонов и страниц в этом проекте нет.
 
