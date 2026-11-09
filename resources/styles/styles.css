@@ -335,8 +335,8 @@ summary:focus-visible {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    width: 88px;
+    gap: 6px;
+    width: 72px;
 }
 
 .metric,
@@ -344,11 +344,12 @@ summary:focus-visible {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     font-size: 10px;
+    line-height: 1.2;
     color: var(--text);
     background: #ffffffee;
-    padding: 7px;
+    padding: 3px;
     border: 1px solid var(--line);
     border-radius: 8px;
     width: 100%;
@@ -370,6 +371,28 @@ summary:focus-visible {
     color: #218c58;
 }
 
+.feed-actions .circle {
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.feed-actions .metric-likes {
+    flex-direction: row;
+    justify-content: center;
+    gap: 4px;
+}
+
+.feed-actions .next {
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    padding: 4px 3px;
+    border-radius: 8px;
+}
+
+.feed-actions .next .circle {
+    font-size: 20px;
+}
 .next:hover {
     background: #d4f7e5;
     border-color: var(--accent);

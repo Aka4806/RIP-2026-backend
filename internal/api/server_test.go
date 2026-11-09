@@ -33,6 +33,9 @@ func TestCardLifecycle(t *testing.T) {
 	}
 	defer tx.Rollback()
 	user := models.User{Username: fmt.Sprintf("test_%d", time.Now().UnixNano())}
+	if err := user.SetPassword("test-password"); err != nil {
+		t.Fatal(err)
+	}
 	if err := tx.Create(&user).Error; err != nil {
 		t.Fatal(err)
 	}

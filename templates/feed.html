@@ -43,13 +43,12 @@
                 <span>селективность</span>
             </div>
 
-            <div class="metric">
+            <div class="metric metric-likes" aria-label="Лайков: {{.likes}}" title="Лайки">
                 <span class="circle" aria-hidden="true">♡</span>
                 <strong>{{.likes}}</strong>
-                <span>лайков</span>
             </div>
 
-            <a class="next" href="/feed/{{.index.ID}}?next=true">
+            <a class="next" href="/feed/{{.index.ID}}?next=true" aria-label="Следующая конфигурация" title="Следующий">
                 <span class="circle" aria-hidden="true">↓</span>
                 <span>Следующий</span>
             </a>
